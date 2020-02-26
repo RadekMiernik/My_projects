@@ -1,0 +1,132 @@
+def wybor_znaku_gracza():
+    """Zwraca wybrany znak przez graczy i ich imiona"""
+    global imie_1, imie_2, znak_gracza_1, znak_gracza_2 #okazuje sie, że zmienne nie musza być inicjowane wcześniej
+    imie_1 = input(print("Podaj imię pierwszego gracza: "))
+    wybor = input(print("Wybierasz X czy O? (domyślnie dostajesz X)"))
+    wybor = wybor.upper()
+    if wybor == "X":
+        znak_gracza_1 = "X"
+        znak_gracza_2 = "O"
+    elif wybor == "O":
+        znak_gracza_1 = "O"
+        znak_gracza_2 = "X"
+    else:
+        znak_gracza_1 = "X"
+        znak_gracza_2 = "O"
+    imie_2 = input(print("Podaj imię drugiego gracza: "))
+    print("Gracz-PIERWSZY- to \t:::{}::: \ti wybrał ----------- > {}".format(imie_1, znak_gracza_1))
+    print("Gracz---DRUGI-- to \t:::{}::: \ti pozostał mu -------> {}".format(imie_2, znak_gracza_2))
+    return imie_1, imie_2, znak_gracza_1, znak_gracza_2
+
+def zasady():
+    """Wyswietla zasady gry"""
+    print("""
+        Witaj w grze KÓŁKO i KRZYŻYK
+        
+        Za chwilę GRACZ nr 1 zmierzy się z GRACZEM nr 2
+        
+        Zasady są bardzo proste:
+        \t-poniżej znajduje się plansza, którą należy wypełnić znakami
+        \t-wybór pola następuje poprzez określenie go w turze danego gracza 
+        \t-wybór dokonywany jest za pomocą numerów
+        
+        \t!POWODZENIA!
+        
+        Poniżej znajduje się wzór tablicy
+        
+        \t   |   |
+        \t 1 | 2 | 3 \tGRACZ NR 1
+        \t___|___|___
+        \t   |   |
+        \t 4 | 5 | 6 \t----vs----
+        \t___|___|___         
+        \t   |   |
+        \t 7 | 8 | 9 \tGRACZ NR 2
+        \t   |   |   
+        
+        \t!DO BOJU!""")
+
+def lista_ruchow():
+    """Tworzy listę dostępnych ruchów, które naniesione zostaną na planszę"""
+    global lista_ruchow
+    lista_ruchow = ["1","2","3","4","5","6","7","8","9"]
+    return lista_ruchow
+
+def tablica_gry():
+    """Wyświetla obecną tablicę w grze. Potem pojawią się wybrane pola obsadzone X lub O"""
+    tablica = """
+           |   |
+         {A} | {B} | {C}
+        ___|___|___
+           |   |
+         {D} | {E} | {F}
+        ___|___|___         
+           |   |
+         {G} | {H} | {I}
+           |   |         
+        """
+
+    print(tablica.format(A=lista_ruchow[0],B=lista_ruchow[1],C=lista_ruchow[2],D=lista_ruchow[3],E=lista_ruchow[4],F=lista_ruchow[5],G=lista_ruchow[6],H=lista_ruchow[7],I=lista_ruchow[8]))
+
+    
+def win_check():
+    """lista warunków zwycięstwa"""
+    war_X = ["X","X","X"] 
+    war_X1 = war_X in (lista_ruchow[0:3],lista_ruchow[3:6],lista_ruchow[6:9])
+    war_X2 = war_X in ([lista_ruchow[0],lista_ruchow[3],lista_ruchow[6]],[lista_ruchow[1],lista_ruchow[4],lista_ruchow[7]],[lista_ruchow[2],lista_ruchow[5],lista_ruchow[8]])
+    war_X3 = war_X in ([lista_ruchow[0],lista_ruchow[4],lista_ruchow[8]],[lista_ruchow[2],lista_ruchow[4],lista_ruchow[6]])
+    war_O = ["O","O","O"] 
+    war_O1 = war_O in (lista_ruchow[0:3],lista_ruchow[3:6],lista_ruchow[6:9])
+    war_O2 = war_O in ([lista_ruchow[0],lista_ruchow[3],lista_ruchow[6]],[lista_ruchow[1],lista_ruchow[4],lista_ruchow[7]],[lista_ruchow[2],lista_ruchow[5],lista_ruchow[8]])
+    war_O3 = war_O in ([lista_ruchow[0],lista_ruchow[4],lista_ruchow[8]],[lista_ruchow[2],lista_ruchow[4],lista_ruchow[6]])
+    if war_X1 == True or war_X2 == True or war_X3 == True:
+        print("BRAWO GRACZU Z X")
+        win = True
+        return win
+    elif war_O1 == True or war_O2 == True or war_O3 == True:
+        print("BRAWO GRACZU Z O")
+        win = True
+        return win
+    else:
+        print("!GRAMY DALEJ!")
+        win = False
+        return win
+    
+def ruch_gracza():
+    """pętla ruchów graczy
+    --- do rozwinięcia - uniemożliwić zajęcie już zajmowanego pola"""
+    win = False
+    gracz = 1
+    while win == False:
+        if gracz == 1 and win == False:
+            print("""
+            Ok {} Twoja kolej
+            pamiętaj, że grasz {}
+            Obecna tablica do gry wygląda tak:""".format(imie_1, znak_gracza_1))
+            print(tablica_gry())
+            wybor = int(input(print("Które pole wybierasz? ")))
+            lista_ruchow[wybor-1] = znak_gracza_1
+            gracz *= -1
+            win = win_check()
+        elif gracz == -1 and win == False:
+            print("""
+            Ok {} Twoja kolej
+            pamiętaj, że grasz {}
+            Obecna tablica do gry wygląda tak:""".format(imie_2, znak_gracza_2))
+            tablica_gry()
+            wybor = int(input(print("Które pole wybierasz? ")))
+            lista_ruchow[wybor-1] = znak_gracza_2
+            gracz *= -1
+            win = win_check()
+    tablica_gry()
+    print("KONIEC GRY!")
+
+def main():
+    """funkcja główna"""
+    wybor_znaku_gracza()
+    zasady()
+    lista_ruchow()
+    win_check()
+    ruch_gracza()
+
+main()
